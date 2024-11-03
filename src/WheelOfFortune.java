@@ -13,6 +13,7 @@ public abstract class WheelOfFortune extends Game {
     protected int missedCount;
     protected int maxGuessCount;
     protected List<String> phraseList;
+    private int totalScore;
 
     // Constructor
     public WheelOfFortune(int maxGuessCount) {
@@ -21,6 +22,7 @@ public abstract class WheelOfFortune extends Game {
         this.previousGuesses = "";
         this.missedCount = 0;
         this.maxGuessCount = maxGuessCount;
+        this.totalScore = 0;
         readPhrases();
     }
 
@@ -113,9 +115,11 @@ public abstract class WheelOfFortune extends Game {
             // Check for game win condition
             if (hiddenPhrase.indexOf("*") == -1) {
                 score = Math.max(0, maxGuessCount - missedCount);
+                totalScore += score;
                 System.out.println("Congratulations!");
                 System.out.println("You guessed the phrase: " + this.phrase + ".");
                 System.out.println("You've won with a score of: " + score);
+                System.out.println("Your total score is now: " + totalScore);
 
                 // Discard the used phrase
                 phraseList.remove(phrase);
