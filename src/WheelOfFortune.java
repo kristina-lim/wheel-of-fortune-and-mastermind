@@ -89,6 +89,10 @@ public abstract class WheelOfFortune extends Game {
     // Main game loop
     @Override
     public GameRecord play() {
+        // Reset previous guesses for each new game
+        this.previousGuesses = "";
+        this.missedCount = 0;
+
         System.out.println("Welcome to Wheel of Fortune! The rules are quite simple: ");
         System.out.println("1) You will have a maximum of " + maxGuessCount + " guesses to figure out the hidden phrase.");
         System.out.println("2) Only guess one letter at a time.");
@@ -127,6 +131,7 @@ public abstract class WheelOfFortune extends Game {
 
         return new GameRecord(score, "Player ID"); // Handle player ID logic as needed
     }
+
     // Method to ask if the user wants to play again
     @Override
     public boolean playNext() {
