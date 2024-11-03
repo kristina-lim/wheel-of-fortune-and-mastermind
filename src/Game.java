@@ -4,12 +4,19 @@ public abstract class Game {
     public AllGamesRecord playAll() {
         // Create a new object to hold the results of all games played
         AllGamesRecord allGamesRecord = new AllGamesRecord();
-        // Loop to play games until playNext() is false
-        while (playNext()) {
-            // Play the game and add the result GameRecord to allGamesRecord
-            allGamesRecord.add(play());
-        }
-        // Returns that contains all the recorded games
+        boolean playAgain;
+
+        do {
+            // Play the game and get the GameRecord
+            GameRecord record = play();
+            // Add the record to the AllGamesRecord
+            allGamesRecord.add(record);
+
+            // Prompt the user to play again
+            playAgain = playNext();
+        } while (playAgain); // Loop continues if the user says yes
+
+        // Return all recorded games
         return allGamesRecord;
     }
 

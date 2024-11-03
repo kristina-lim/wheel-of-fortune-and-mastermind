@@ -5,8 +5,6 @@ public class WheelOfFortuneUserGame extends WheelOfFortune {
     // Constructor
     public WheelOfFortuneUserGame(int maxGuessCount) {
         super(maxGuessCount);
-        // Read phrases only once in the constructor
-        readPhrases();
     }
 
     // Method to get a valid letter guess from user
@@ -50,66 +48,9 @@ public class WheelOfFortuneUserGame extends WheelOfFortune {
         return guessedLetter;
     }
 
-    // Main game loop that handles playing WoF game
-    @Override
-    public GameRecord play() {
-        System.out.println("Welcome to Wheel of Fortune! The rules are quite simple: ");
-        System.out.println("1) You will have a maximum of " + maxGuessCount + " guesses to figure out the hidden phrase.");
-        System.out.println("2) Only guess one letter at a time.");
-        System.out.println("3) Have fun and good luck!\n");
-
-        // Continue playing until there's no phrases left
-        while (phraseList.size() > 0) {
-            // Select random phrase for the round
-            randomPhrase();
-            // Initialize score for this round
-            int score = 0;
-
-            // Loop for guessing process
-            while (true) {
-                System.out.println("Current Phrase: " + hiddenPhrase);
-                System.out.print("Previous guesses: " + previousGuesses + "\n");
-                // Get guess from the user
-                char guessedLetter = getGuess(previousGuesses);
-                // Process the guessed letter
-                processGuess(guessedLetter);
-
-                // Check if the game is won
-                if (hiddenPhrase.indexOf("*") == -1) {
-                    // Calculate score
-                    score = Math.max(0, maxGuessCount - missedCount);
-                    System.out.println("You've won with a score of: " + score);
-                    // Remove used phrase from the list
-                    phraseList.remove(phrase);
-                    break;
-                }
-            }
-        }
-
-        System.out.println("No more phrases available. Thank you for playing!");
-        // Return game record
-        return new GameRecord(0, "getPlayerId"); // Handle player ID logic as needed
-    }
-
     // Method to ask if the user wants to play again
     @Override
     public boolean playNext() {
-       // Loop continuously to ask if the user wants to play again
-         while (true) {
-             // Start a new game
-             play();
-             // Check if the user wants to continue playing
-             if(!playNext()) {
-                 // Exit if the user chooses not to play
-                 break;
-             }
-         }
-
-         // If there's no more phrases, return false
-         if (phraseList.isEmpty()) {
-             return false;
-         }
-
         Scanner scanner = new Scanner(System.in);
         System.out.print("Do you want to play again with another phrase? (yes/no): ");
         // Get user's response

@@ -21,6 +21,7 @@ public abstract class WheelOfFortune extends Game {
         this.previousGuesses = "";
         this.missedCount = 0;
         this.maxGuessCount = maxGuessCount;
+        readPhrases();
     }
 
     // Reads phrases from text file
@@ -32,12 +33,11 @@ public abstract class WheelOfFortune extends Game {
         }
     }
 
-    // Chooses a random phrase from the phrase list and initializes hidden phrase
     protected void randomPhrase() {
-        readPhrases();
+        if (phraseList.isEmpty()) return;
         Random rand = new Random();
-        int index = rand.nextInt(3);
-        this.phrase = phraseList.get(index);
+        int index = rand.nextInt(phraseList.size());
+        this.phrase = phraseList.remove(index); // Remove chosen phrase
         getHiddenPhrase();
     }
 
@@ -73,24 +73,13 @@ public abstract class WheelOfFortune extends Game {
             }
         }
 
-        // Check if the game is won or lost
-        if (this.hiddenPhrase.indexOf("*") == -1) {
-            System.out.println("Congratulations!");
-            System.out.println("You guessed the phrase: " + this.phrase + ".");
-            System.exit(0);
-        } else if (correctGuess) {
-            System.out.println("Nice! The letter " + guessedLetter + " is present in the hidden phrase!");
-        } else {
+        // Check if letter is incorrect and update the missed count
+        if (!correctGuess) {
             this.missedCount++;
             System.out.println("Guesses left: " + (this.maxGuessCount - this.missedCount));
             System.out.println("Sorry, there was no occurrence of the letter " + guessedLetter + " in the hidden phrase.");
         }
 
-        // Check for game over
-        if (this.missedCount >= this.maxGuessCount) {
-            System.out.println("Womp womp! GAME OVER. The phrase was: " + this.phrase + ".");
-            System.exit(0);
-        }
         return correctGuess;
     }
 
@@ -100,6 +89,11 @@ public abstract class WheelOfFortune extends Game {
     // Main game loop
     @Override
     public GameRecord play() {
+        System.out.println("Welcome to Wheel of Fortune! The rules are quite simple: ");
+        System.out.println("1) You will have a maximum of " + maxGuessCount + " guesses to figure out the hidden phrase.");
+        System.out.println("2) Only guess one letter at a time.");
+        System.out.println("3) Have fun and good luck!\n");
+        // Select a random phrase
         randomPhrase();
         int score = 0;
 
@@ -107,31 +101,40 @@ public abstract class WheelOfFortune extends Game {
         while (true) {
             System.out.println("Current Phrase: " + hiddenPhrase);
             System.out.print("Previous guesses: " + previousGuesses + "\n");
-            // Get player's guess
+            // Get user guess
             char guessedLetter = getGuess(previousGuesses);
             // Process guess
-            processGuess(guessedLetter);
+            boolean correctGuess = processGuess(guessedLetter);
 
-            // Check if game is won
+            // Check for game win condition
             if (hiddenPhrase.indexOf("*") == -1) {
                 score = Math.max(0, maxGuessCount - missedCount);
+                System.out.println("Congratulations!");
+                System.out.println("You guessed the phrase: " + this.phrase + ".");
+                System.out.println("You've won with a score of: " + score);
+
+                // Discard the used phrase
+                phraseList.remove(phrase);
+                break;
+            }
+
+            // Check for game over condition
+            if (missedCount >= maxGuessCount) {
+                System.out.println("Game over! The phrase was: " + phrase);
                 break;
             }
         }
 
-        return new GameRecord(score, "getPlayerId");
+        return new GameRecord(score, "Player ID"); // Handle player ID logic as needed
     }
-
-    // Method to prompt the player to play again
+    // Method to ask if the user wants to play again
     @Override
     public boolean playNext() {
-        // Check if there's no more phrases to play
+        // If no phrases left, no need to ask
         if (phraseList.isEmpty()) {
             return false;
         }
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Do you want to play again? (yes/no): ");
-        String response = scanner.nextLine().trim().toLowerCase();
-        return response.equals("yes");
+            return true; // Default implementation allows playing next
     }
+
 }
