@@ -1,3 +1,4 @@
+// Class keeps track of the score and player ID for a single play of a game
 public class GameRecord implements Comparable<GameRecord> {
     // Variable score keeps track of the score
     private int score;
