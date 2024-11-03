@@ -1,3 +1,4 @@
+// class encapsulates code for looping through a set of games and recording the results
 public abstract class Game {
     // Plays a set of games and record the results
     public AllGamesRecord playAll() {

@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+// Class manages and tracks the results of multiple games played in the game system
 public class AllGamesRecord {
     // List to store all GameRecord objects
     private List<GameRecord> records = new ArrayList<>();
