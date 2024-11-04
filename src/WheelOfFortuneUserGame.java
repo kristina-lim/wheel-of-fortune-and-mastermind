@@ -3,6 +3,7 @@ import java.util.Scanner;
 // Allows the user to play each game with a random phrase, and if there are more phrases, ask after the game if the player wants to continue
 public class WheelOfFortuneUserGame extends WheelOfFortune {
     private int totalScore;
+    private String username;
 
     // Constructor
     public WheelOfFortuneUserGame(int maxGuessCount) {
@@ -58,6 +59,13 @@ public class WheelOfFortuneUserGame extends WheelOfFortune {
         this.previousGuesses = "";
         this.missedCount = 0;
 
+        // Prompt for username if it's not set
+        if (username == null) {
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Enter your username: ");
+            username = scanner.nextLine().trim();
+        }
+
         System.out.println("Welcome to Wheel of Fortune! The rules are quite simple: ");
         System.out.println("1) You will have a maximum of " + maxGuessCount + " guesses to figure out the hidden phrase.");
         System.out.println("2) Only guess one letter at a time.");
@@ -97,7 +105,7 @@ public class WheelOfFortuneUserGame extends WheelOfFortune {
             }
         }
 
-        return new GameRecord(totalScore, "Player ID"); // Handle player ID logic as needed
+        return new GameRecord(totalScore, username); // Handle player ID logic as needed
     }
 
     // Method to ask if the user wants to play again
