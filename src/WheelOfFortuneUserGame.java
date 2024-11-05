@@ -1,14 +1,23 @@
 import java.util.Scanner;
 
+// aigame use delete for the phraselist, but when the bot switches, it needs to read from the file again
+// in ai game missed count needs to be reset when you switch between different players
+    // when moves to the next phrase prev guesses and guesses left needs to be reset
+// but in general you dont want to reset the score
+
 // Allows the user to play each game with a random phrase, and if there are more phrases, ask after the game if the player wants to continue
 public class WheelOfFortuneUserGame extends WheelOfFortune {
-    private int totalScore;
+    private int score;
+    private int missedCount;
     private String username;
+    private String previousGuesses;
 
     // Constructor
     public WheelOfFortuneUserGame(int maxGuessCount) {
         super(maxGuessCount);
-        this.totalScore = 0;
+        this.score = 0;
+        this.missedCount = missedCount;
+        this.previousGuesses = previousGuesses;
     }
 
     // Method to get a valid letter guess from user
@@ -55,7 +64,6 @@ public class WheelOfFortuneUserGame extends WheelOfFortune {
     // Main game loop
     @Override
     public GameRecord play() {
-        // Reset previous guesses for each new game
         this.previousGuesses = "";
         this.missedCount = 0;
 
@@ -73,7 +81,6 @@ public class WheelOfFortuneUserGame extends WheelOfFortune {
 
         // Select a random phrase
         randomPhrase();
-        int score = 0;
 
         // Continuous loop for the guessing process
         while (true) {
@@ -87,11 +94,9 @@ public class WheelOfFortuneUserGame extends WheelOfFortune {
             // Check for game win condition
             if (hiddenPhrase.indexOf("*") == -1) {
                 score = Math.max(0, maxGuessCount - missedCount);
-                totalScore += score;
                 System.out.println("Congratulations!");
                 System.out.println("You guessed the phrase: " + this.phrase + ".");
                 System.out.println("You've won with a score of: " + score);
-                System.out.println("Your total score is now: " + totalScore);
 
                 // Discard the used phrase
                 phraseList.remove(phrase);
@@ -104,8 +109,7 @@ public class WheelOfFortuneUserGame extends WheelOfFortune {
                 break;
             }
         }
-
-        return new GameRecord(totalScore, username); // Handle player ID logic as needed
+        return new GameRecord(score, username); // Handle player ID logic as needed
     }
 
     // Method to ask if the user wants to play again
