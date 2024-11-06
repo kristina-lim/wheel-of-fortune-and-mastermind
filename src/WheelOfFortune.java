@@ -36,7 +36,7 @@ public abstract class WheelOfFortune extends Game {
         if (phraseList.isEmpty()) return;
         Random rand = new Random();
         int index = rand.nextInt(phraseList.size());
-        this.phrase = phraseList.remove(index); // Remove chosen phrase
+        this.phrase = phraseList.get(index); // Get a random phrase without removing it
         getHiddenPhrase();
     }
 
@@ -64,6 +64,11 @@ public abstract class WheelOfFortune extends Game {
             }
         }
 
+        // If it's a correct guess, add the points to the score
+        if (correctGuess) {
+            System.out.println("Correct! You earned 1 point for the letter " + guessedLetter + ".");
+        }
+
         // Check if letter has been guessed before, update prevGuesses, and increment one if guess is wrong
         if (this.previousGuesses.indexOf(guessedLetter) == -1) {
             this.previousGuesses += guessedLetter;
@@ -74,11 +79,9 @@ public abstract class WheelOfFortune extends Game {
 
         // Check if letter is incorrect and update the missed count
         if (!correctGuess) {
-            this.missedCount++;
             System.out.println("Guesses left: " + (this.maxGuessCount - this.missedCount));
             System.out.println("Sorry, there was no occurrence of the letter " + guessedLetter + " in the hidden phrase.");
         }
-
         return correctGuess;
     }
 

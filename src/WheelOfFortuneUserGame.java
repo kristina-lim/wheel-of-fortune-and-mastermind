@@ -1,4 +1,7 @@
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
+import java.util.List;
 
 // aigame use delete for the phraselist, but when the bot switches, it needs to read from the file again
 // in ai game missed count needs to be reset when you switch between different players
@@ -8,16 +11,16 @@ import java.util.Scanner;
 // Allows the user to play each game with a random phrase, and if there are more phrases, ask after the game if the player wants to continue
 public class WheelOfFortuneUserGame extends WheelOfFortune {
     private int score;
-    private int missedCount;
     private String username;
     private String previousGuesses;
+    private List<String> usedPhrases;
 
     // Constructor
     public WheelOfFortuneUserGame(int maxGuessCount) {
         super(maxGuessCount);
-        this.score = 0;
-        this.missedCount = missedCount;
-        this.previousGuesses = previousGuesses;
+        this.score = score;
+        this.previousGuesses = "";
+        this.usedPhrases = new ArrayList<>(); // Initialize usedPhrases list
     }
 
     // Method to get a valid letter guess from user
@@ -61,11 +64,33 @@ public class WheelOfFortuneUserGame extends WheelOfFortune {
         return guessedLetter;
     }
 
+    // Method to ensure phrases don't get repeated for the user
+    @Override
+    protected void randomPhrase() {
+        if (phraseList.isEmpty()) return;
+
+        // If all phrases have been used, reset the list of used phrases
+        if (usedPhrases.size() == phraseList.size()) {
+            usedPhrases.clear();
+        }
+
+        Random rand = new Random();
+        int index;
+        do {
+            index = rand.nextInt(phraseList.size());
+        } while (usedPhrases.contains(phraseList.get(index))); // Avoid previously used phrase
+
+        this.phrase = phraseList.remove(index); // Remove the chosen phrase from the list
+        usedPhrases.add(this.phrase); // Track the used phrase
+        getHiddenPhrase();
+    }
+
     // Main game loop
     @Override
     public GameRecord play() {
         this.previousGuesses = "";
         this.missedCount = 0;
+        this.score = 0;
 
         // Prompt for username if it's not set
         if (username == null) {
@@ -74,10 +99,11 @@ public class WheelOfFortuneUserGame extends WheelOfFortune {
             username = scanner.nextLine().trim();
         }
 
-        System.out.println("Welcome to Wheel of Fortune! The rules are quite simple: ");
+        System.out.println("\nWelcome to Wheel of Fortune! The rules are quite simple: ");
         System.out.println("1) You will have a maximum of " + maxGuessCount + " guesses to figure out the hidden phrase.");
         System.out.println("2) Only guess one letter at a time.");
-        System.out.println("3) Have fun and good luck!\n");
+        System.out.println("3) For each correct guessed letter, you earn one point.");
+        System.out.println("4) Have fun and good luck!\n");
 
         // Select a random phrase
         randomPhrase();
@@ -91,9 +117,13 @@ public class WheelOfFortuneUserGame extends WheelOfFortune {
             // Process guess
             boolean correctGuess = processGuess(guessedLetter);
 
+            // If the guess is correct, add 1 point to score
+            if (correctGuess) {
+                score++;
+            }
+
             // Check for game win condition
             if (hiddenPhrase.indexOf("*") == -1) {
-                score = Math.max(0, maxGuessCount - missedCount);
                 System.out.println("Congratulations!");
                 System.out.println("You guessed the phrase: " + this.phrase + ".");
                 System.out.println("You've won with a score of: " + score);
@@ -116,7 +146,7 @@ public class WheelOfFortuneUserGame extends WheelOfFortune {
     @Override
     public boolean playNext() {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Do you want to play again with another phrase? (yes/no): ");
+        System.out.print("\nDo you want to play again with another phrase? (yes/no): ");
         // Get user's response
         String response = scanner.nextLine().trim().toLowerCase();
         // Return true if the user wants to play again
@@ -128,6 +158,13 @@ public class WheelOfFortuneUserGame extends WheelOfFortune {
         WheelOfFortuneUserGame wofUserGame = new WheelOfFortuneUserGame(3);
         AllGamesRecord record = wofUserGame.playAll();
         System.out.println(record);
+        // After playing the games, display the high game list and average score
+        System.out.println("High Game List for the top gamers:");
+        List<GameRecord> highGames = record.highGameList(wofUserGame.username, wofUserGame.score);
+        for (GameRecord game : highGames) {
+            System.out.println(game);
+        }
+        System.out.println("\nAverage score for all games played: " + record.average());
     }
 }
 

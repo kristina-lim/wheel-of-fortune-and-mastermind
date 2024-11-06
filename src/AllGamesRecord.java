@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 // Class manages and tracks the results of multiple games played in the game system
@@ -17,54 +18,70 @@ public class AllGamesRecord {
         records.add(record);
     }
 
-    // Calculates the average score of all games in the records
-    public int average() {
+    public double average() {
+        if (records.isEmpty()) return 0;
         int sum = 0;
-        // Sums all scores in records
         for (GameRecord record : records) {
-            sum +=  record.getScore();
+            sum += record.getScore();
         }
-        // Returns average score
-        return sum / records.size();
+        return (double) sum / records.size();
     }
 
-    // Calculates the average score for a specific player through their ID
-    public int average(String playerId) {
+    // Returns the average score for a specific player
+    public double average(String playerId) {
         int sum = 0;
-        int gamesPlayed = 0;
-        // Sums all scores game played by specific player
+        int count = 0;
         for (GameRecord record : records) {
             if (record.getPlayerId().equals(playerId)) {
                 sum += record.getScore();
-                gamesPlayed++;
+                count++;
             }
         }
-        // Returns average score for player
-        return sum / gamesPlayed;
+        return (double) sum / count;
     }
 
-    // Returns a list of the top n GameRecords
+    // Returns a list of the top n GameRecords, sorted by score in descending order
     public List<GameRecord> highGameList(int n) {
-        // Sort records based on scores
-        Collections.sort(records);
-        // Returns sublist of the top n scores
-        return records.subList(Math.max(records.size() - n, 0), records.size());
+        // Sort records in descending order based on score
+        Collections.sort(records, new Comparator<GameRecord>() {
+            @Override
+            public int compare(GameRecord record1, GameRecord record2) {
+                // Return a negative value if record1's score is greater than record2's
+                return Integer.compare(record2.getScore(), record1.getScore());
+            }
+        });
+        // Return sublist of the top n scores
+        return records.subList(0, Math.min(n, records.size()));
     }
 
-    // Returns a list of the top n GameRecords for specific player through ID
+    // Returns a list of the top n GameRecords for a specific player, sorted in descending order
     public List<GameRecord> highGameList(String playerId, int n) {
         // List to store all player records
         List<GameRecord> playerRecords = new ArrayList<>();
+
         // Collect records for specific player
         for (GameRecord record : records) {
             if (record.getPlayerId().equals(playerId)) {
                 playerRecords.add(record);
             }
         }
-        // Sort the player's records based on scores
-        Collections.sort(playerRecords);
-        // Returns sublist of the top n scores of the specific player
-        return playerRecords.subList(Math.max(playerRecords.size() - n, 0), playerRecords.size());
+
+        // Sort the player's records based on scores in descending order
+        Collections.sort(playerRecords, new Comparator<GameRecord>() {
+            @Override
+            public int compare(GameRecord record1, GameRecord record2) {
+                // Return a negative value if record1's score is greater than record2's
+                return Integer.compare(record2.getScore(), record1.getScore());
+            }
+        });
+
+        // Return the top n records for that player
+        return playerRecords.subList(0, Math.min(n, playerRecords.size()));
+    }
+
+    // Getter for records
+    public List<GameRecord> getRecords() {
+        return records;
     }
 
     // Returns string of all GameRecords in the records list
@@ -73,4 +90,3 @@ public class AllGamesRecord {
         return records.toString();
     }
 }
-
