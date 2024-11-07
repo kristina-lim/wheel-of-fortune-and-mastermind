@@ -6,7 +6,7 @@ public class WheelOfFortuneAIGame extends WheelOfFortune {
     private List<WheelOfFortunePlayer> players; // List to hold players (AI or otherwise)
     private List<GameRecord> allGamesRecord;
     private List<String> usedPhrases;
-    private int score;
+    private int currentPlayerIndex = 0;
 
     // Default constructor with a default AI player
     public WheelOfFortuneAIGame() {
@@ -74,68 +74,69 @@ public class WheelOfFortuneAIGame extends WheelOfFortune {
     @Override
     public GameRecord play() {
         this.previousGuesses = "";  // Reset previous guesses before starting the game
-        this.score = 0;         // Reset total score
+        int playerScore = 0;
+        String playerId = "";
 
-        // Loop through all players and make them play 3 games
-        for (WheelOfFortunePlayer player : players) {
-            int playerScore = 0; // Player's score for the 3 games
+        // Loop through all players and make them play 3 rounds
+        for (int i = 0; i < 3; i++) {
+            WheelOfFortunePlayer player = players.get(currentPlayerIndex);
+            playerId = player.playerId();
+            player.reset();  // Reset the player's state before starting a new game
+            randomPhrase();   // Pick a new phrase
+            System.out.println("\n\nNew phrase for this round: " + phrase);
+            playerScore = 0;
+            this.previousGuesses = "";
+            this.missedCount = 0;
+            this.hiddenPhrase = new StringBuilder();
+            getHiddenPhrase();  // Ensure you start with the correct hidden phrase
 
-            // Play 3 rounds for each player
-            for (int i = 0; i < 3; i++) {
-                player.reset();  // Reset the player's state before starting a new game
-                randomPhrase();   // Pick a new phrase
-                System.out.println("\n\nNew phrase for this round: " + phrase);
-                this.previousGuesses = "";
-                this.missedCount = 0;
-                this.hiddenPhrase = new StringBuilder();
-                getHiddenPhrase();  // Ensure you start with the correct hidden phrase
+            System.out.println("Game " + (i + 1) + " for " + player.playerId());
 
-                System.out.println("Game " + (i + 1) + " for " + player.playerId());
+            // Run the game loop until the player has guessed the phrase or missed all guesses
+            while (missedCount < maxGuessCount) {
+                System.out.println("Current Phrase: " + hiddenPhrase);
+                System.out.println("Previous guesses: " + previousGuesses);
 
-                // Run the game loop until the player has guessed the phrase or missed all guesses
-                while (missedCount < maxGuessCount) {
-                    System.out.println("Current Phrase: " + hiddenPhrase);
-                    System.out.println("Previous guesses: " + previousGuesses);
+                // AI guesses the next letter
+                char guessedLetter = player.nextGuess();
 
-                    // AI guesses the next letter
-                    char guessedLetter = player.nextGuess();
+                // Process the AI's guess
+                boolean correctGuess = processGuess(guessedLetter);
 
-                    // Process the AI's guess
-                    boolean correctGuess = processGuess(guessedLetter);
-
-                    // If the guess was correct, update the score
-                    if (correctGuess) {
-                        playerScore++; // Increment score for each correct guess
-                    }
-
-                    // Check if the game is won
-                    if (hiddenPhrase.indexOf("*") == -1) {
-                        System.out.println("AI Player " + player.playerId() + " guessed the phrase: " + this.phrase);
-                        System.out.println("Score for this game: " + playerScore);
-                        break;
-                    }
+                // If the guess was correct, update the score
+                if (correctGuess) {
+                    playerScore++; // Increment score for each correct guess
                 }
 
-                // Game over condition: if the AI misses too many guesses
-                if (missedCount >= maxGuessCount) {
-                    System.out.println("AI Player " + player.playerId() + " failed to guess the phrase: " + phrase);
-                    System.out.println("Game over! The phrase was: " + phrase + "\n");
+                // Check if the game is won
+                if (hiddenPhrase.indexOf("*") == -1) {
+                    System.out.println("AI Player " + player.playerId() + " guessed the phrase: " + this.phrase);
+                    System.out.println("Score for this game: " + playerScore);
+                    break;
                 }
+            }
+
+            // Game over condition: if the AI misses too many guesses
+            if (missedCount >= maxGuessCount) {
+                System.out.println("AI Player " + player.playerId() + " failed to guess the phrase: " + phrase);
+                System.out.println("Game over! The phrase was: " + phrase + "\n");
             }
 
             // After 3 games, record the player's total score
             GameRecord record = new GameRecord(playerScore, player.playerId());
             allGamesRecord.add(record); // Add the result to the AllGamesRecord
-            this.score += playerScore; // Add to total score
         }
-
-        // Return a GameRecord at the end of the round with the total score of all games
-        return new GameRecord(score, "AI Bot");
+        return new GameRecord(playerScore, playerId);
     }
 
+    // Increment the counter, stop the game when it reaches the end of the players list
     @Override
     public boolean playNext() {
-        return false; // AI game doesn't ask if the player wants to continue
+        currentPlayerIndex++;  // Move to the next player
+        if (currentPlayerIndex >= players.size()) {
+            return false;  // Stop the game if all players have played
+        }
+        return true;
     }
 
     public static void main(String [] args) {
@@ -152,14 +153,16 @@ public class WheelOfFortuneAIGame extends WheelOfFortune {
         // Display results
         System.out.println("High Game List for each player:");
         for (WheelOfFortunePlayer player : players) {
-            System.out.println(player.playerId() + " High Scores: " + allGamesRecord.highGameList(3));
+            String playerId = player.playerId();
+            List<GameRecord> highScores = allGamesRecord.highGameList(3, playerId); // Getting top 3 scores for each player
+            System.out.println(playerId + " High Scores: " + highScores);
         }
 
         System.out.println("Average score of all 9 games: " + allGamesRecord.average());
 
         System.out.println("Average score for each player:");
         for (WheelOfFortunePlayer player : players) {
-            System.out.println(player.playerId() + " Average: " + allGamesRecord.average());
+            System.out.println(player.playerId() + " Average: " + allGamesRecord.average(player.playerId()));
         }
     }
 }

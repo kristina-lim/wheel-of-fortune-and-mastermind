@@ -3,11 +3,6 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.List;
 
-// aigame use delete for the phraselist, but when the bot switches, it needs to read from the file again
-// in ai game missed count needs to be reset when you switch between different players
-    // when moves to the next phrase prev guesses and guesses left needs to be reset
-// but in general you dont want to reset the score
-
 // Allows the user to play each game with a random phrase, and if there are more phrases, ask after the game if the player wants to continue
 public class WheelOfFortuneUserGame extends WheelOfFortune {
     private int score;
@@ -160,11 +155,10 @@ public class WheelOfFortuneUserGame extends WheelOfFortune {
         System.out.println(record);
         // After playing the games, display the high game list and average score
         System.out.println("High Game List for the top gamers:");
-        List<GameRecord> highGames = record.highGameList(wofUserGame.username, wofUserGame.score);
+        List<GameRecord> highGames = record.highGameList(wofUserGame.score);
         for (GameRecord game : highGames) {
             System.out.println(game);
         }
         System.out.println("\nAverage score for all games played: " + record.average());
     }
 }
-
