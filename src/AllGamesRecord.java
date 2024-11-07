@@ -28,18 +28,6 @@ public class AllGamesRecord {
     }
 
     // Returns the average score for a specific player
-//    public double average(String playerId) {
-//        int sum = 0;
-//        int count = 0;
-//        for (GameRecord record : records) {
-//            if (record.getPlayerId().equals(playerId)) {
-//                sum += record.getScore();
-//                count++;
-//            }
-//        }
-//        return (double) sum / count;
-//    }
-
     public double average(String playerId) {
         int sum = 0;
         int count = 0;
