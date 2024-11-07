@@ -37,7 +37,7 @@ public class AllGamesRecord {
                 count++;
             }
         }
-        return count > 0 ? (double) sum / count : 0.0; // Handle case where count is 0
+        return sum/count;
     }
 
 
@@ -55,32 +55,18 @@ public class AllGamesRecord {
         return records.subList(0, Math.min(n, records.size()));
     }
 
-
-    //FIX THIS
-    public List<GameRecord> highGameList(int n, String playerId) {
-        // Create a list to store the filtered records for the specific player
-        List<GameRecord> playerRecords = new ArrayList<>();
-
-        // Filter records to include only the ones that belong to the specified player
-        for (GameRecord record : records) {
-            if (record.getPlayerId().equals(playerId)) {
-                playerRecords.add(record);
+    public List<GameRecord> highGameList(int n, String playerId){
+        List<GameRecord> topList = new ArrayList<>();
+        Collections.sort(records);
+        int index = 0;
+        while(topList.size() < n && index < records.size()){
+            GameRecord curGameRecord = records.get(index);
+            if(curGameRecord.getPlayerId().equals(playerId)){
+                topList.add(curGameRecord);
             }
+            index++;
         }
-
-//        System.out.println("Filtered records for player " + playerId + ": " + playerRecords);
-
-        // Sort the filtered records in descending order based on score
-        Collections.sort(records, new Comparator<GameRecord>() {
-            @Override
-            public int compare(GameRecord record1, GameRecord record2) {
-                // Return a negative value if record1's score is greater than record2's
-                return Integer.compare(record2.getScore(), record1.getScore());
-            }
-        });
-
-        // Return sublist of the top n scores for this specific player
-        return records.subList(0, Math.min(n, records.size()));
+        return topList;
     }
 
     // Returns string of all GameRecords in the records list
