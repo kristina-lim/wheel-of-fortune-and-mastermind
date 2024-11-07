@@ -2,10 +2,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 // Abstract class for the Wheel of Fortune game, extends from Game class
-public abstract class WheelOfFortune extends Game {
+public abstract class WheelOfFortune extends GuessingGame {
     protected String phrase;
     protected StringBuilder hiddenPhrase;
     protected String previousGuesses;
@@ -20,6 +21,7 @@ public abstract class WheelOfFortune extends Game {
         this.previousGuesses = "";
         this.missedCount = 0;
         this.maxGuessCount = maxGuessCount;
+        getHiddenPhrase();
         readPhrases();
     }
 
@@ -32,6 +34,7 @@ public abstract class WheelOfFortune extends Game {
         }
     }
 
+    // Chooses a random phrase from the list
     protected void randomPhrase() {
         if (phraseList.isEmpty()) return;
         Random rand = new Random();
@@ -64,25 +67,38 @@ public abstract class WheelOfFortune extends Game {
             }
         }
 
-        // If it's a correct guess, add the points to the score
         if (correctGuess) {
             System.out.println("Correct! You earned 1 point for the letter " + guessedLetter + ".");
-        }
-
-        // Check if letter has been guessed before, update prevGuesses, and increment one if guess is wrong
-        if (this.previousGuesses.indexOf(guessedLetter) == -1) {
-            this.previousGuesses += guessedLetter;
-            if (!correctGuess) {
-                this.missedCount++;
-            }
-        }
-
-        // Check if letter is incorrect and update the missed count
-        if (!correctGuess) {
-            System.out.println("Guesses left: " + (this.maxGuessCount - this.missedCount));
+        } else {
+            // Increment missedCount only if the guess is wrong
+            missedCount++;
             System.out.println("Sorry, there was no occurrence of the letter " + guessedLetter + " in the hidden phrase.");
         }
+
+        System.out.println("Guesses left: " + (this.maxGuessCount - this.missedCount));
         return correctGuess;
+    }
+
+    // Compares this WheelOfFortune instance to another object
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        WheelOfFortune that = (WheelOfFortune) o;
+        return missedCount == that.missedCount && maxGuessCount == that.maxGuessCount && Objects.equals(phrase, that.phrase) && Objects.equals(hiddenPhrase, that.hiddenPhrase) && Objects.equals(previousGuesses, that.previousGuesses) && Objects.equals(phraseList, that.phraseList);
+    }
+
+    // Returns a string representation of the class state
+    @Override
+    public String toString() {
+        return "WheelOfFortune{" +
+                "phrase='" + phrase + '\'' +
+                ", hiddenPhrase=" + hiddenPhrase +
+                ", previousGuesses='" + previousGuesses + '\'' +
+                ", missedCount=" + missedCount +
+                ", maxGuessCount=" + maxGuessCount +
+                ", phraseList=" + phraseList +
+                '}';
     }
 
     // Abstract method to get a guess from the player

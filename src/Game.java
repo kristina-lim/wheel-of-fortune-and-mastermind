@@ -14,6 +14,25 @@ public abstract class Game {
 
     };
 
+    // Compares object to another object
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    // toString method
+    @Override
+    public String toString() {
+        return "Game{}";
+    }
 
     // Abstract method to play a game
     public abstract GameRecord play();

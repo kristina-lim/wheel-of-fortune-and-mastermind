@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 // Class manages and tracks the results of multiple games played in the game system
 public class AllGamesRecord {
@@ -18,6 +15,7 @@ public class AllGamesRecord {
         records.add(record);
     }
 
+    // Returns the average score
     public double average() {
         if (records.isEmpty()) return 0;
         int sum = 0;
@@ -55,6 +53,7 @@ public class AllGamesRecord {
         return records.subList(0, Math.min(n, records.size()));
     }
 
+    // Returns a list of the top n GameRecords for a specific player
     public List<GameRecord> highGameList(int n, String playerId){
         List<GameRecord> topList = new ArrayList<>();
         Collections.sort(records);
@@ -67,6 +66,15 @@ public class AllGamesRecord {
             index++;
         }
         return topList;
+    }
+
+    // Compares AllGamesRecord instance to another object
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AllGamesRecord that = (AllGamesRecord) o;
+        return Objects.equals(records, that.records);
     }
 
     // Returns string of all GameRecords in the records list

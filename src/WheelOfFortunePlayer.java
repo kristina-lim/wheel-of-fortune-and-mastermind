@@ -1,3 +1,4 @@
+// WheelOfFortunePlayer interface that defines methods needed by all players
 public interface WheelOfFortunePlayer {
     // Method to get the next letter guess from the player
     char nextGuess();

@@ -1,3 +1,5 @@
+import java.util.Objects;
+
 // Class keeps track of the score and player ID for a single play of a game
 public class GameRecord implements Comparable<GameRecord> {
     // Variable score keeps track of the score
@@ -25,6 +27,15 @@ public class GameRecord implements Comparable<GameRecord> {
     @Override
     public int compareTo(GameRecord other) {
         return Integer.compare(this.score, other.score);
+    }
+
+    // Compares GameRecord instance to another object
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GameRecord that = (GameRecord) o;
+        return score == that.score && Objects.equals(playerId, that.playerId);
     }
 
     // toString method to show player ID and score

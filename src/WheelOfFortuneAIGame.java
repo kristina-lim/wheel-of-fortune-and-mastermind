@@ -1,7 +1,9 @@
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Random;
 
+// WheelOfFortuneAIGame class will play a game for each phrase read from the file
 public class WheelOfFortuneAIGame extends WheelOfFortune {
     private List<WheelOfFortunePlayer> players; // List to hold players (AI or otherwise)
     private List<GameRecord> allGamesRecord;
@@ -39,6 +41,7 @@ public class WheelOfFortuneAIGame extends WheelOfFortune {
         readPhrases();
     }
 
+    // Gets the next guessed character from the current player
     @Override
     public char getGuess(String previousGuesses) {
         // Just get the next guess from the first player (you could extend to multiple players if needed)
@@ -71,6 +74,7 @@ public class WheelOfFortuneAIGame extends WheelOfFortune {
         getHiddenPhrase();
     }
 
+    // Main game play
     @Override
     public GameRecord play() {
         this.previousGuesses = "";  // Reset previous guesses before starting the game
@@ -83,7 +87,6 @@ public class WheelOfFortuneAIGame extends WheelOfFortune {
             playerId = player.playerId();
             player.reset();  // Reset the player's state before starting a new game
             randomPhrase();   // Pick a new phrase
-            System.out.println("\n\nNew phrase for this round: " + phrase);
             playerScore = 0;
             this.previousGuesses = "";
             this.missedCount = 0;
@@ -139,6 +142,28 @@ public class WheelOfFortuneAIGame extends WheelOfFortune {
         return true;
     }
 
+    // Checks if WheelOfFortuneAIGame object is equal to another object
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        WheelOfFortuneAIGame that = (WheelOfFortuneAIGame) o;
+        return currentPlayerIndex == that.currentPlayerIndex && Objects.equals(players, that.players) && Objects.equals(allGamesRecord, that.allGamesRecord) && Objects.equals(usedPhrases, that.usedPhrases);
+    }
+
+    // Returns a string representation of the WheelOfFortuneAIGame object
+    @Override
+    public String toString() {
+        return "WheelOfFortuneAIGame{" +
+                "players=" + players +
+                ", allGamesRecord=" + allGamesRecord +
+                ", usedPhrases=" + usedPhrases +
+                ", currentPlayerIndex=" + currentPlayerIndex +
+                '}';
+    }
+
+    // Main method to run the WheelOfFortuneAIGame
     public static void main(String [] args) {
         // Define players
         List<WheelOfFortunePlayer> players = new ArrayList<>();

@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.Scanner;
-import java.util.List;
+import java.util.*;
 
 // Allows the user to play each game with a random phrase, and if there are more phrases, ask after the game if the player wants to continue
 public class WheelOfFortuneUserGame extends WheelOfFortune {
@@ -68,7 +65,6 @@ public class WheelOfFortuneUserGame extends WheelOfFortune {
         if (usedPhrases.size() == phraseList.size()) {
             usedPhrases.clear();
         }
-
         Random rand = new Random();
         int index;
         do {
@@ -140,12 +136,28 @@ public class WheelOfFortuneUserGame extends WheelOfFortune {
     // Method to ask if the user wants to play again
     @Override
     public boolean playNext() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("\nDo you want to play again with another phrase? (yes/no): ");
-        // Get user's response
-        String response = scanner.nextLine().trim().toLowerCase();
-        // Return true if the user wants to play again
-        return response.equals("yes");
+        return super.playNext();
+    }
+
+    // Compares this WheelOfFortuneUserGame object with another object
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        WheelOfFortuneUserGame that = (WheelOfFortuneUserGame) o;
+        return score == that.score && Objects.equals(username, that.username) && Objects.equals(previousGuesses, that.previousGuesses) && Objects.equals(usedPhrases, that.usedPhrases);
+    }
+
+    // Returns a string representation of the WheelOfFortune object
+    @Override
+    public String toString() {
+        return "WheelOfFortuneUserGame{" +
+                "score=" + score +
+                ", username='" + username + '\'' +
+                ", previousGuesses='" + previousGuesses + '\'' +
+                ", usedPhrases=" + usedPhrases +
+                '}';
     }
 
     // Main method to run the program
