@@ -1,5 +1,5 @@
 # Wheel of Fortune and Mastermind
-#### My project is based on the Wheel of Fortune and the Mastermind game. The Wheel of Fortune has a hierarchy, where the Game is the grandparent and the rest of the classes are its descendants.
+#### My project is based on the Wheel of Fortune and the Mastermind game. In this project I got experience designing software using inheritance, polymorphism, interfaces and abstract classes.
 
 #### In my Wheel of Fortune game, you can either play or have three different AI players attempt to guess the phrase.
      AI Players:
